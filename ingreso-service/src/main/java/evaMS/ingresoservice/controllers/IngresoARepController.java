@@ -3,6 +3,7 @@ package evaMS.ingresoservice.controllers;
 
 
 import evaMS.ingresoservice.entities.IngresoARepEntity;
+import evaMS.ingresoservice.request.NuevaRepAplicadaRequest;
 import evaMS.ingresoservice.services.IngresoARepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +56,12 @@ public class IngresoARepController {
     public ResponseEntity<IngresoARepEntity> getIngresoARepById(@PathVariable Long id) {
         IngresoARepEntity ingresoARepEntity= ingresoARepService.getIngresoARepById(id);
         return ResponseEntity.ok(ingresoARepEntity);
+    }
+
+    @PostMapping("/asignarNuevaReparacion")
+    public ResponseEntity<Integer> nuevaReparacionAsignada(@RequestBody NuevaRepAplicadaRequest nuevaRepAplicada){
+        Integer response=ingresoARepService.asignarNuevaRepEspecificaAIngreso(nuevaRepAplicada);
+        return ResponseEntity.ok(response);
     }
 }
 

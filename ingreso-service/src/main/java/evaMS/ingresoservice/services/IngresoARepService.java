@@ -2,8 +2,13 @@ package evaMS.ingresoservice.services;
 
 
 import evaMS.ingresoservice.clients.PrecioPorRepFeignClient;
+import evaMS.ingresoservice.clients.RepEspecificaFeignClient;
+import evaMS.ingresoservice.clients.VehiculoFeignClient;
+import evaMS.ingresoservice.dto.RepEspecificaEntity;
+import evaMS.ingresoservice.dto.VehiculoEntity;
 import evaMS.ingresoservice.entities.IngresoARepEntity;
 import evaMS.ingresoservice.repositories.IngresoARepRepository;
+import evaMS.ingresoservice.request.NuevaRepAplicadaRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +24,12 @@ public class IngresoARepService {
 
     @Autowired
     IngresoARepRepository ingresoARepRepository;
+
+    @Autowired
+    VehiculoFeignClient vehiculoFeignClient;
+
+    @Autowired
+    RepEspecificaFeignClient repEspecificaFeignClient;
 
     public ArrayList<IngresoARepEntity> getReparaciones(){
         return (ArrayList<IngresoARepEntity>) ingresoARepRepository.findAll();
@@ -87,5 +98,18 @@ public class IngresoARepService {
         return ingresoARepRepository.findById(id).get();
     }
 
+    public Integer asignarNuevaRepEspecificaAIngreso(NuevaRepAplicadaRequest request){
+        RepEspecificaEntity repPorAsignar=new RepEspecificaEntity();
+        VehiculoEntity vehiculo=vehiculoFeignClient.getVehiculoById(request.getIdVehiculo());
 
+        Integer precioReparacion= precioPorRepFeignClient.getPrecioByRepYTipoDeMotor(request.getTipoDeReparacion(),vehiculo.getTipoMotor());
+
+        repPorAsignar.setIdIngresoARep(request.getIdIngreso());
+        repPorAsignar.setNombreDeLaRep(request.getTipoDeReparacion());
+        repPorAsignar.setPrecioDeLaReparacion(precioReparacion);
+
+        repEspecificaFeignClient.saveRepEspecifica(repPorAsignar);
+
+        return precioReparacion;
+    }
 }
