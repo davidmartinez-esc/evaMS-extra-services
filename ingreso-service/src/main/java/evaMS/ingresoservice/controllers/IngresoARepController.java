@@ -4,11 +4,13 @@ package evaMS.ingresoservice.controllers;
 
 import evaMS.ingresoservice.entities.IngresoARepEntity;
 import evaMS.ingresoservice.request.NuevaRepAplicadaRequest;
+import evaMS.ingresoservice.services.GestionIngresoService;
 import evaMS.ingresoservice.services.IngresoARepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -17,6 +19,9 @@ import java.util.List;
 public class IngresoARepController {
     @Autowired
     IngresoARepService ingresoARepService;
+
+    @Autowired
+    GestionIngresoService gestionIngresoService;
 
     @GetMapping("/")
     public ResponseEntity<List<IngresoARepEntity>> listReparaciones() {
@@ -60,8 +65,15 @@ public class IngresoARepController {
 
     @PostMapping("/asignarNuevaReparacion")
     public ResponseEntity<Integer> nuevaReparacionAsignada(@RequestBody NuevaRepAplicadaRequest nuevaRepAplicada){
-        Integer response=ingresoARepService.asignarNuevaRepEspecificaAIngreso(nuevaRepAplicada);
+        Integer response=gestionIngresoService.asignarNuevaRepEspecificaAIngreso(nuevaRepAplicada);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/getNumeroDeReps")
+    public ResponseEntity<Integer> getNumeroDeReparaciones(@RequestBody IngresoARepEntity ingresoARep){
+        return ResponseEntity.ok(ingresoARepService.getNumeroDeReparacionesDeVehiculo(1,ingresoARep.getFechaRecogida()));
+    }
+
+
 }
 
