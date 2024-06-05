@@ -73,6 +73,12 @@ public class IngresoARepController {
     public ResponseEntity<Integer> getNumeroDeReparaciones(@RequestBody IngresoARepEntity ingresoARep){
         return ResponseEntity.ok(ingresoARepService.getNumeroDeReparacionesDeVehiculo(1,ingresoARep.getFechaRecogida()));
     }
+    @PutMapping("/pasoPorCaja")
+    public ResponseEntity<IngresoARepEntity> pasoPorCaja(@RequestBody IngresoARepEntity ingresoARep) throws Exception {
+        IngresoARepEntity response = gestionIngresoService.calcularCostosPreciosFinales(ingresoARep);
+        return ResponseEntity.ok(response);
+    }
+
 
 
 }

@@ -38,25 +38,24 @@ public class RecargoPorKilometrajeService {
 
     private String getKilometrajeInString(int kilometraje){
         if (kilometraje>=0 && kilometraje<=5000 ){
-            return "0-5.000";
+            return "0-5000";
         } else if (kilometraje >= 5001 && kilometraje <= 12000) {
-            return "5.001-12.000";
+            return "5001-12000";
         } else if (kilometraje >= 12001 && kilometraje <= 25000) {
-            return "12.001-25.000";
+            return "12001-25000";
         } else if (kilometraje >= 25001 && kilometraje <= 40000) {
-            return "25.001-40.000";
-        }else {
-            return "40.000–MAS";
+            return "25001-40000";
         }
+            return "40000-MAS";
     }
-    /*
-    public Integer getRecargoPorAntiguedadByTipoDeVehiculo(int kilometraje, VehiculoEntity vehiculo){
+
+    public Integer getRecargoPorKilometrajeByTipoDeVehiculo(int kilometraje, String tipoDeVehiculo){
         String kilmetrajeString= getKilometrajeInString(kilometraje);
 
-        return recargoPorKilometrajeRepository.getRecargoByKilmetrajeYTipoDeVehiculo(kilmetrajeString,vehiculo.getTipo());
+        return recargoPorKilometrajeRepository.getRecargoByKilmetrajeYTipoDeVehiculo(kilmetrajeString,tipoDeVehiculo);
 
     }
-    */
+
 
 
 }

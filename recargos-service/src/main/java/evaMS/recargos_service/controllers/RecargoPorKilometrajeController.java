@@ -39,4 +39,6 @@ public class RecargoPorKilometrajeController {
         var isDeleted= recargoPorKilometrajeService.deleteRecargoPorKilometraje(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }

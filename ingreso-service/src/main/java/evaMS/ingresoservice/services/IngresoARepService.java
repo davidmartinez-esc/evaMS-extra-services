@@ -1,16 +1,8 @@
 package evaMS.ingresoservice.services;
 
 
-import evaMS.ingresoservice.clients.DescuentoAplicadoFeignClient;
-import evaMS.ingresoservice.clients.PrecioPorRepFeignClient;
-import evaMS.ingresoservice.clients.RepEspecificaFeignClient;
-import evaMS.ingresoservice.clients.VehiculoFeignClient;
-import evaMS.ingresoservice.dto.RepEspecificaEntity;
-import evaMS.ingresoservice.dto.VehiculoEntity;
 import evaMS.ingresoservice.entities.IngresoARepEntity;
 import evaMS.ingresoservice.repositories.IngresoARepRepository;
-import evaMS.ingresoservice.request.NuevaRepAplicadaRequest;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

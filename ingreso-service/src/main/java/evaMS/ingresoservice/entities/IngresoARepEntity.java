@@ -34,6 +34,8 @@ public class IngresoARepEntity {
 
     private int montoIVA;
 
+    private int kilometrajeAlIngreso;
+
     @Temporal(TemporalType.DATE)
     private Date fechaIngreso;
 
