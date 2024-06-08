@@ -57,10 +57,16 @@ public class RecargoPorAntiguedadService {
     }
 
     public Integer getRecargoPorAntiguedadPorTipo(int anioFabricacion,String tipoDeVehiculo){
+        Integer response;
         String antiguedadString= getAntiguedadInString(anioFabricacion);
 
-        return recargoPorAntiguedadRepository.getRecargoByAntiguedadPorTipo(antiguedadString,tipoDeVehiculo);
+        response=recargoPorAntiguedadRepository.getRecargoByAntiguedadPorTipo(antiguedadString,tipoDeVehiculo);
 
+        if (response==null){
+            response=0;
+        }
+
+        return response;
     }
 
 

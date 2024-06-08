@@ -7,18 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-@FeignClient(value = "rdr-ingreso-service",
-        path = "/api/v1/repEspecifica",
+@FeignClient(value = "bonos-aplicados-service",
+        path = "/api/v1/bonoAplicado",
         configuration = {FeignClientConfig.class})
-public interface RepEspecificaFeignClient {
+public interface BonoAplicadoFeignClient {
 
-    @PostMapping("/")
-    RepEspecificaEntity saveRepEspecifica(@RequestBody RepEspecificaEntity tipoDeRep);
-
-    @GetMapping("/getMontoTotalDelIngreso/{id}")
-     Integer getMontoTotalDelIngreso(@PathVariable int id);
-
-
+    @GetMapping("/getNumeroDeBonos")
+    Integer getNumeroDeBonosAplicadosPorMesMarca(@RequestParam int mes, @RequestParam int anio,
+                                                 @RequestParam String marca);
 
 
 }

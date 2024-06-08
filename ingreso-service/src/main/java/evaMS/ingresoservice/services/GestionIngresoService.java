@@ -4,11 +4,16 @@ import evaMS.ingresoservice.clients.*;
 import evaMS.ingresoservice.dto.RepEspecificaEntity;
 import evaMS.ingresoservice.dto.VehiculoEntity;
 import evaMS.ingresoservice.entities.IngresoARepEntity;
+import evaMS.ingresoservice.request.CalcularCostoFinalRequest;
 import evaMS.ingresoservice.request.NuevaRepAplicadaRequest;
+import evaMS.ingresoservice.request.RecargoPorAtrasoEnRecogerRequest;
 import evaMS.ingresoservice.request.RequestDescuentoDiaHoraIngreso;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Calendar;
+import java.util.Date;
 
 @Service
 public class GestionIngresoService {
@@ -18,7 +23,8 @@ public class GestionIngresoService {
     @Autowired
     RepEspecificaFeignClient repEspecificaFeignClient;
 
-
+    @Autowired
+    BonoAplicadoFeignClient bonoAplicadoFeignClient;
 
     @Autowired
     PrecioPorRepFeignClient precioPorRepFeignClient;
@@ -35,12 +41,10 @@ public class GestionIngresoService {
 
     float IVA=19;
 
-
-
-
     public Integer asignarNuevaRepEspecificaAIngreso(NuevaRepAplicadaRequest request){
         RepEspecificaEntity repPorAsignar=new RepEspecificaEntity();
-        VehiculoEntity vehiculo=vehiculoFeignClient.getVehiculoById(request.getIdVehiculo());
+        IngresoARepEntity ingreso=ingresoARepService.getIngresoARepById((long)request.getIdIngreso());
+        VehiculoEntity vehiculo=vehiculoFeignClient.getVehiculoById((long)ingreso.getIdVehiculo());
 
         Integer precioReparacion= precioPorRepFeignClient.getPrecioByRepYTipoDeMotor(request.getTipoDeReparacion(),vehiculo.getTipoMotor());
 
@@ -73,9 +77,9 @@ public class GestionIngresoService {
     */
 
     @Transactional
-    public IngresoARepEntity calcularCostosPreciosFinales(IngresoARepEntity ingreso) throws Exception {
+    public IngresoARepEntity calcularCostosPreciosFinales(CalcularCostoFinalRequest calculoFinalRequest) throws Exception {
        // checkearPropiedadesNotNull(ingreso);
-
+        IngresoARepEntity ingreso=calculoFinalRequest.getIngreso();
 
         int montoReparaciones=repEspecificaFeignClient.getMontoTotalDelIngreso(Math.toIntExact(ingreso.getId()));
         int montoDescuentos=0;
@@ -90,13 +94,16 @@ public class GestionIngresoService {
 
         float descuentoPorNreps=0;
         float descuentoPorIngresoLunesJueves=0;
+        int montoDescuentoPorBono=0;
 
         float recargoPorAntiguedad=0;
         float recargoPorKilometraje=0;
         float recargoPorAtrasoEnRecoger=0;
 
 
-
+        if (calculoFinalRequest.getUsaBono()){
+            montoDescuentoPorBono=getMontoBonoSiEsPosible(ingreso.getFechaRecogida(),vehiculo.getMarca());
+        }
 
         //DESCUENTOS
         descuentoPorNreps=descuentosFeignClient.getDescuentoPorNReps(numeroDeReps,tipoDeVehiculo);
@@ -115,17 +122,18 @@ public class GestionIngresoService {
         recargoPorKilometraje=recargosFeignClient.getRecargoPorKilometraje(ingreso.getKilometrajeAlIngreso(),tipoDeVehiculo);
         recargoPorKilometraje=recargoPorKilometraje/100;
 
-        recargoPorAtrasoEnRecoger=recargosFeignClient.getRecargoPorAtrasoEnRecoger(ingreso.getFechaSalida(),ingreso.getFechaRecogida());
+        RecargoPorAtrasoEnRecogerRequest requestRecargo=new RecargoPorAtrasoEnRecogerRequest(ingreso.getFechaSalida(),ingreso.getFechaRecogida());
+        recargoPorAtrasoEnRecoger=recargosFeignClient.getRecargoPorAtrasoEnRecoger(requestRecargo);
         recargoPorAtrasoEnRecoger=recargoPorAtrasoEnRecoger/100;
 
         //CALCULOS
-        montoDescuentos= (int) (montoReparaciones*descuentoPorNreps + montoReparaciones*descuentoPorIngresoLunesJueves);
+        montoDescuentos= (int) (montoReparaciones*descuentoPorNreps + montoReparaciones*descuentoPorIngresoLunesJueves + montoDescuentoPorBono);
 
         montoRecargos=(int)(montoReparaciones*recargoPorAntiguedad + montoReparaciones*recargoPorKilometraje +
                 montoReparaciones*recargoPorAtrasoEnRecoger);
 
 
-        montoIVA=(int)(montoReparaciones*IVA); //CAMBIAR ESTO PARA QUE APAREZCA EN UNA TABLA DE UNA BASE DE DATOS
+        montoIVA=(int)(montoReparaciones*(IVA/100)); //CAMBIAR ESTO PARA QUE APAREZCA EN UNA TABLA DE UNA BASE DE DATOS
 
         costoTotal= (int) (montoReparaciones-montoDescuentos+montoRecargos + (montoReparaciones*IVA/100));
 
@@ -140,6 +148,32 @@ public class GestionIngresoService {
         ingresoARepService.updateIngresoARep(ingreso);
 
        return ingreso;
+    }
+
+    private Integer getMontoBonoSiEsPosible(Date fecha, String marca) throws Exception {
+        int mes=0;
+        int anio=0;
+        Integer montoDelBono;
+        Integer bonosAplicadosEsteMes;
+        Integer bonosDisponibles;
+
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(fecha);
+
+        anio=calendar.get(Calendar.YEAR);
+        mes=calendar.get(Calendar.MONTH)+1;
+
+         bonosAplicadosEsteMes=bonoAplicadoFeignClient.getNumeroDeBonosAplicadosPorMesMarca(mes,anio,marca);
+         bonosDisponibles=descuentosFeignClient.getCantidadBonos(marca);
+
+        if (bonosAplicadosEsteMes>bonosDisponibles){
+            throw new Exception("No se puede asignar un bono a este vehiculo, intentelo denuevo");
+        }
+       montoDelBono=descuentosFeignClient.getMontoBono(marca);
+        if (montoDelBono==null){
+            montoDelBono=0;
+        }
+        return montoDelBono;
     }
 
 }

@@ -50,9 +50,14 @@ public class RecargoPorKilometrajeService {
     }
 
     public Integer getRecargoPorKilometrajeByTipoDeVehiculo(int kilometraje, String tipoDeVehiculo){
+        Integer response;
         String kilmetrajeString= getKilometrajeInString(kilometraje);
 
-        return recargoPorKilometrajeRepository.getRecargoByKilmetrajeYTipoDeVehiculo(kilmetrajeString,tipoDeVehiculo);
+        response=recargoPorKilometrajeRepository.getRecargoByKilmetrajeYTipoDeVehiculo(kilmetrajeString,tipoDeVehiculo);
+        if (response==null){
+            response=0;
+        }
+        return response;
 
     }
 

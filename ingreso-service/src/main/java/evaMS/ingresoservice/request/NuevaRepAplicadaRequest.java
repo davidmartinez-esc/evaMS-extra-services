@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NuevaRepAplicadaRequest {
- private Long idVehiculo;
+
  private Integer idIngreso;
  private String tipoDeReparacion;
 }

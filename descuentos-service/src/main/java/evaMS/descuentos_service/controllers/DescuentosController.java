@@ -2,6 +2,7 @@ package evaMS.descuentos_service.controllers;
 
 import evaMS.descuentos_service.entities.DescuentoPorNRepEntity;
 import evaMS.descuentos_service.requests.RequestDescuentoDiaHoraIngreso;
+import evaMS.descuentos_service.services.DatosBonoService;
 import evaMS.descuentos_service.services.DescuentoIngresoLunesJueves;
 import evaMS.descuentos_service.services.DescuentoPorNRepService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,14 @@ import java.util.List;
 @RequestMapping("/api/v1/descuentos")
 public class DescuentosController {
     @Autowired
+    DatosBonoService datosBonoService;
+    @Autowired
     DescuentoPorNRepService descuentoService;
 
     @Autowired
     DescuentoIngresoLunesJueves descuentoIngresoLunesJueves;
+
+
 
     @GetMapping("/descuentosPorNRep/")
     public ResponseEntity<List<DescuentoPorNRepEntity>> listDescuentoPorNReps() {
@@ -46,10 +51,22 @@ public class DescuentosController {
     public ResponseEntity<Integer> getDescuentoPorNReps(@RequestParam int nReps, @RequestParam String tipoMotor){
         return ResponseEntity.ok(descuentoService.getDescuentoByNRepYTipoDeMotor(nReps,tipoMotor));
     }
-    @GetMapping("/getDescuentoPorDiaHoraIngreso")
+    @PostMapping("/getDescuentoPorDiaHoraIngreso")
     public ResponseEntity<Integer> getDescuentoPorDiaHoraIngreso(@RequestBody RequestDescuentoDiaHoraIngreso request){
 
         return ResponseEntity.ok(descuentoIngresoLunesJueves.getDescuentoPorHoraYdiaIngreso(request.getHoraIngreso()
                 ,request.getFechaIngreso()));
+    }
+
+    @GetMapping("/descuentoPorBono/getMontoBono")
+    public ResponseEntity<Integer> getMontoBono(@RequestParam String marca) {
+        Integer response=datosBonoService.getMontoBono(marca);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/descuentoPorBono/getCantidadBonos")
+    public ResponseEntity<Integer> getCantidadBonos(@RequestParam String marca) {
+        Integer response=datosBonoService.getCantidadDeBonos(marca);
+        return ResponseEntity.ok(response);
     }
 }

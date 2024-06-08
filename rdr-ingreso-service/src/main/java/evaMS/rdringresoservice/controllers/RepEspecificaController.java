@@ -15,6 +15,8 @@ public class RepEspecificaController {
     @Autowired
     RepEspecificaService repEspecificaService;
 
+
+
     @GetMapping("/")
     public ResponseEntity<List<RepEspecificaEntity>> listAllRepsecificas() {
         List<RepEspecificaEntity> tiposDeRep = repEspecificaService.getAllReparacionesEspecificas();
@@ -49,4 +51,6 @@ public class RepEspecificaController {
         Integer response = repEspecificaService.getMontoTotalDelIngreso(id);
         return ResponseEntity.ok(response);
     }
+
+
 }

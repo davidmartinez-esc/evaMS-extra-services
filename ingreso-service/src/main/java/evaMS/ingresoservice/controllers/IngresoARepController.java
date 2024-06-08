@@ -3,6 +3,7 @@ package evaMS.ingresoservice.controllers;
 
 
 import evaMS.ingresoservice.entities.IngresoARepEntity;
+import evaMS.ingresoservice.request.CalcularCostoFinalRequest;
 import evaMS.ingresoservice.request.NuevaRepAplicadaRequest;
 import evaMS.ingresoservice.services.GestionIngresoService;
 import evaMS.ingresoservice.services.IngresoARepService;
@@ -74,8 +75,8 @@ public class IngresoARepController {
         return ResponseEntity.ok(ingresoARepService.getNumeroDeReparacionesDeVehiculo(1,ingresoARep.getFechaRecogida()));
     }
     @PutMapping("/pasoPorCaja")
-    public ResponseEntity<IngresoARepEntity> pasoPorCaja(@RequestBody IngresoARepEntity ingresoARep) throws Exception {
-        IngresoARepEntity response = gestionIngresoService.calcularCostosPreciosFinales(ingresoARep);
+    public ResponseEntity<IngresoARepEntity> pasoPorCaja(@RequestBody CalcularCostoFinalRequest request) throws Exception {
+        IngresoARepEntity response = gestionIngresoService.calcularCostosPreciosFinales(request);
         return ResponseEntity.ok(response);
     }
 

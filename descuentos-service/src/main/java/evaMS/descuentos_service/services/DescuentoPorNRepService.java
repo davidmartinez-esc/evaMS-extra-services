@@ -36,7 +36,7 @@ public class DescuentoPorNRepService {
     }
 
     public Integer getDescuentoByNRepYTipoDeMotor(int numeroDeReps,String tipoDeMotor){
-        Integer descuento=0;
+        Integer descuento;
         String numeroDeRepStr=numeroDeRepsAString(numeroDeReps);
 
         if (numeroDeRepStr=="NO FIGURA"){
@@ -44,6 +44,9 @@ public class DescuentoPorNRepService {
         }
 
         descuento=descuentoRepository.getDescuentoByNumeroDeRepsTipoDeMotor(numeroDeRepStr,tipoDeMotor);
+        if (descuento==null){
+            descuento=0;
+        }
         return descuento;
 
 

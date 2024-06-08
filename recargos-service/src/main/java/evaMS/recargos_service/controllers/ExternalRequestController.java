@@ -1,14 +1,12 @@
 package evaMS.recargos_service.controllers;
 
+import evaMS.recargos_service.requests.RecargoPorAtrasoEnRecogerRequest;
 import evaMS.recargos_service.services.RecargoPorAntiguedadService;
 import evaMS.recargos_service.services.RecargoPorAtrasoEnRecoger;
 import evaMS.recargos_service.services.RecargoPorKilometrajeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -34,11 +32,11 @@ public class ExternalRequestController {
 
 
 
-    @GetMapping("/getRecargoPorAtrasoEnRecoger")
-    public ResponseEntity<Integer> getRecargoPorAtrasoEnRecoger(@RequestParam Date fechaSalida,
-                                                                @RequestParam Date fechaRecogida) {
+    @PostMapping("/getRecargoPorAtrasoEnRecoger")
+    public ResponseEntity<Integer> getRecargoPorAtrasoEnRecoger(@RequestBody RecargoPorAtrasoEnRecogerRequest request
+                                                                ) {
         Integer recargoPorRecogidaTardia =
-                recargoPorAtrasoEnRecoger.getRecargoPorAtrasoEnRecoger(fechaSalida,fechaRecogida);
+                recargoPorAtrasoEnRecoger.getRecargoPorAtrasoEnRecoger(request);
         return ResponseEntity.ok(recargoPorRecogidaTardia);
     }
 
