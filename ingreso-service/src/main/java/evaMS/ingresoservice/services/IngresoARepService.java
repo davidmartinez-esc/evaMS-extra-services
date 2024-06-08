@@ -63,4 +63,7 @@ public class IngresoARepService {
         return ingresoARepRepository.getNumeroDeReparaciones(fechaRecogida,cal.getTime(),idVehiculo);
     }
 
+    public Integer getTotalIngresosARep(){
+        return ingresoARepRepository.getTotalDeIngresos();
+    }
 }

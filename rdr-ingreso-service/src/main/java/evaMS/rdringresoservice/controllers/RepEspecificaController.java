@@ -2,6 +2,7 @@ package evaMS.rdringresoservice.controllers;
 
 
 import evaMS.rdringresoservice.entities.RepEspecificaEntity;
+import evaMS.rdringresoservice.requests.BorrarReparacionEspecificaRequest;
 import evaMS.rdringresoservice.services.RepEspecificaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,12 @@ public class RepEspecificaController {
         Integer response = repEspecificaService.getMontoTotalDelIngreso(id);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/borrarByNombreRepIdIngreso")
+    public ResponseEntity<String> deleteRepEspecificaByNombreYId(@RequestBody BorrarReparacionEspecificaRequest request) throws Exception {
+        return ResponseEntity.ok(repEspecificaService.deleteRepEspecificaSegunNombreDeLaRep(request));
+    }
+
 
 
 }

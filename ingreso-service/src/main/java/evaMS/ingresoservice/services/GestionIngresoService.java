@@ -52,6 +52,9 @@ public class GestionIngresoService {
         repPorAsignar.setNombreDeLaRep(request.getTipoDeReparacion());
         repPorAsignar.setPrecioDeLaReparacion(precioReparacion);
 
+        repPorAsignar.setHoraReparacion(request.getHoraReparacion());
+        repPorAsignar.setFechaReparacion(request.getFechaReparacion());
+
         repEspecificaFeignClient.saveRepEspecifica(repPorAsignar);
 
         return precioReparacion;

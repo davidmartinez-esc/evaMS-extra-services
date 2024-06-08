@@ -81,6 +81,9 @@ public class IngresoARepController {
     }
 
 
-
+    @GetMapping("/getTotalDeIngresosARep")
+    public ResponseEntity<Integer> getTotalDeIngresosARep() {
+        return ResponseEntity.ok( ingresoARepService.getTotalIngresosARep());
+    }
 }
 

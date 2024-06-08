@@ -3,6 +3,7 @@ package evaMS.rdringresoservice.services;
 
 import evaMS.rdringresoservice.entities.RepEspecificaEntity;
 import evaMS.rdringresoservice.repositories.RepEspecificaRepository;
+import evaMS.rdringresoservice.requests.BorrarReparacionEspecificaRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,12 @@ public class RepEspecificaService {
 
     public Integer getMontoTotalDelIngreso(int idIngreso){
         return repEspecificaRepository.getCostoDeLasReparacionesDeIngreso(idIngreso);
+    }
+
+    public String deleteRepEspecificaSegunNombreDeLaRep(BorrarReparacionEspecificaRequest request){
+        repEspecificaRepository.
+                deleteReparacionEspecificaByIdIngresoNombre(request.getIdIngresoARep(),request.getNombreReparacion());
+        return "Se logró borrar con exito la reparacion";
     }
 
 

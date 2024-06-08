@@ -19,4 +19,9 @@ public interface RepEspecificaRepository extends JpaRepository<RepEspecificaEnti
 
     @Query(value = "SELECT SUM(r.precio_de_la_reparacion) FROM reparacion_especifica r WHERE r.id_ingresoarep = :idIngreso", nativeQuery = true)
     Integer getCostoDeLasReparacionesDeIngreso(@Param("idIngreso") int idIngreso);
+
+    @Query(value = "DELETE FROM reparacion_especifica r " +
+            "WHERE r.id_ingresoarep = :idIngreso AND r.nombre_de_la_rep = :nombreDeLaRep", nativeQuery = true)
+    void deleteReparacionEspecificaByIdIngresoNombre(@Param("idIngreso") int idIngreso,
+                                                     @Param("nombreDeLaRep") String nombreDeLaRep);
 }
