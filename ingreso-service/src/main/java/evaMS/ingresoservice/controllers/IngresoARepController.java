@@ -2,6 +2,7 @@
 package evaMS.ingresoservice.controllers;
 
 
+import evaMS.ingresoservice.dto.ReporteReparacionCompleta;
 import evaMS.ingresoservice.entities.IngresoARepEntity;
 import evaMS.ingresoservice.request.CalcularCostoFinalRequest;
 import evaMS.ingresoservice.request.NuevaRepAplicadaRequest;
@@ -84,6 +85,11 @@ public class IngresoARepController {
     @GetMapping("/getTotalDeIngresosARep")
     public ResponseEntity<Integer> getTotalDeIngresosARep() {
         return ResponseEntity.ok( ingresoARepService.getTotalIngresosARep());
+    }
+
+    @GetMapping("/getReportesTodosLosDatos")
+    public ResponseEntity<List<ReporteReparacionCompleta>> getReportesDeReparacionesCompletas() {
+        return ResponseEntity.ok( gestionIngresoService.getTodasLasReparacionesConTodosLosDatos());
     }
 }
 

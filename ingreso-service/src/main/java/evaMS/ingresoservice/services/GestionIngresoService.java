@@ -2,6 +2,7 @@ package evaMS.ingresoservice.services;
 
 import evaMS.ingresoservice.clients.*;
 import evaMS.ingresoservice.dto.RepEspecificaEntity;
+import evaMS.ingresoservice.dto.ReporteReparacionCompleta;
 import evaMS.ingresoservice.dto.VehiculoEntity;
 import evaMS.ingresoservice.entities.IngresoARepEntity;
 import evaMS.ingresoservice.request.CalcularCostoFinalRequest;
@@ -12,8 +13,10 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class GestionIngresoService {
@@ -177,6 +180,53 @@ public class GestionIngresoService {
             montoDelBono=0;
         }
         return montoDelBono;
+    }
+
+    public List<ReporteReparacionCompleta> getTodasLasReparacionesConTodosLosDatos(){
+        List<ReporteReparacionCompleta> listaReportes=new ArrayList<>();
+
+        List<VehiculoEntity> listaVehiculos=vehiculoFeignClient.listVehiculos();
+        List<IngresoARepEntity> listaIngresos=ingresoARepService.getReparaciones();
+        IngresoARepEntity ingreso;
+        VehiculoEntity vehiculo;
+
+        for (int i = 0; i < listaIngresos.size(); i++) {
+            ingreso=listaIngresos.get(i);
+            for (int j = 0; j < listaVehiculos.size(); j++) {
+                vehiculo=listaVehiculos.get(j);
+                if (ingreso.getIdVehiculo() == vehiculo.getId()){
+                    ReporteReparacionCompleta reporte= new ReporteReparacionCompleta();
+
+                    reporte.setPatente(vehiculo.getPatente());
+                    reporte.setMarca(vehiculo.getMarca());
+                    reporte.setModelo(vehiculo.getModelo());
+                    reporte.setTipo(vehiculo.getTipo());
+                    reporte.setAnio_Fabricacion(vehiculo.getAnio_Fabricacion());
+                    reporte.setTipoMotor(vehiculo.getTipoMotor());
+
+                    reporte.setFechaIngreso(ingreso.getFechaIngreso());
+                    reporte.setHoraIngreso(ingreso.getHoraIngreso());
+
+                    reporte.setFechaSalida(ingreso.getFechaSalida());
+                    reporte.setHoraSalida(ingreso.getHoraSalida());
+
+                    reporte.setFechaRecogida(ingreso.getFechaRecogida());
+                    reporte.setHoraRecogida(ingreso.getHoraRecogida());
+
+                    reporte.setCostoTotal(ingreso.getCostoTotal());
+                    reporte.setMontoTotalReparaciones(ingreso.getMontoTotalReparaciones());
+                    reporte.setMontoRecargos(ingreso.getMontoRecargos());
+                    reporte.setMontoDescuentos(ingreso.getMontoDescuentos());
+                    reporte.setMontoIVA(ingreso.getMontoIVA());
+
+                    listaReportes.add(reporte);
+
+                }
+            }
+
+        }
+
+        return listaReportes;
     }
 
 }

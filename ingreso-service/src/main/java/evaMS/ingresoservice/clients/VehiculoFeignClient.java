@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 
 @FeignClient(value = "vehiculo-service",
         path = "/api/v1/vehiculo",
@@ -15,4 +17,7 @@ public interface VehiculoFeignClient {
 
     @GetMapping("/{id}")
     VehiculoEntity getVehiculoById(@PathVariable Long id);
+
+    @GetMapping("/")
+    List<VehiculoEntity> listVehiculos();
 }
