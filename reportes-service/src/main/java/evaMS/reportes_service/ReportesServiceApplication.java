@@ -1,4 +1,4 @@
-package evaMS.rdringresoservice;
+package evaMS.reportes_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,10 +6,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-public class RdrIngresoServiceApplication {
+public class ReportesServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RdrIngresoServiceApplication.class, args);
+		SpringApplication.run(ReportesServiceApplication.class, args);
 	}
 
 }

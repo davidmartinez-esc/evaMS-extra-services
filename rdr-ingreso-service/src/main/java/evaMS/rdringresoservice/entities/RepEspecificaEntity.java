@@ -25,6 +25,9 @@ public class RepEspecificaEntity {
     private int idIngresoARep;
 
     private String nombreDeLaRep;
+
+
+
     private int precioDeLaReparacion;
 
     @Temporal(TemporalType.DATE)
@@ -33,6 +36,8 @@ public class RepEspecificaEntity {
     @Temporal(TemporalType.TIME)
     @JsonFormat(pattern = "HH:mm")
     private LocalTime horaReparacion;
+
+    private String patente;
 
 
 }

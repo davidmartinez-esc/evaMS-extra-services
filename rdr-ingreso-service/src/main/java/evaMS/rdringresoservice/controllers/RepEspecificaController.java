@@ -1,8 +1,13 @@
 package evaMS.rdringresoservice.controllers;
 
 
+import evaMS.rdringresoservice.dto.IReporteMes;
+import evaMS.rdringresoservice.dto.NRepsEfectuadasYMonto;
+import evaMS.rdringresoservice.dto.ReporteMesDto;
 import evaMS.rdringresoservice.entities.RepEspecificaEntity;
 import evaMS.rdringresoservice.requests.BorrarReparacionEspecificaRequest;
+import evaMS.rdringresoservice.requests.GetNRepsEfectuadasYMontoRequest;
+import evaMS.rdringresoservice.requests.NuevaRepAplicadaRequest;
 import evaMS.rdringresoservice.services.RepEspecificaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +61,24 @@ public class RepEspecificaController {
     @DeleteMapping("/borrarByNombreRepIdIngreso")
     public ResponseEntity<String> deleteRepEspecificaByNombreYId(@RequestBody BorrarReparacionEspecificaRequest request) throws Exception {
         return ResponseEntity.ok(repEspecificaService.deleteRepEspecificaSegunNombreDeLaRep(request));
+    }
+
+    @GetMapping("/getReporteDelMesPorRep")
+    public ResponseEntity<ReporteMesDto> getReporteUltimoMesPorRep(@RequestParam int mes,@RequestParam int year, @RequestParam String nombreRep) {
+        ReporteMesDto response = repEspecificaService.getReporteMesPorRep(mes, year, nombreRep);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/asignarNuevaRep")
+    public ResponseEntity<Integer> nuevaReparacionAsignada(@RequestBody NuevaRepAplicadaRequest nuevaRepAplicadaRequest){
+        Integer response=repEspecificaService.asignarNuevaRepEspecificaAIngreso(nuevaRepAplicadaRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/getNumeroDeRepsMonto")
+    public ResponseEntity<NRepsEfectuadasYMonto> getRepsEspecificasByIdIngreso(@RequestBody GetNRepsEfectuadasYMontoRequest request) {
+        NRepsEfectuadasYMonto response = repEspecificaService.getNumeroDeRepsEfectuadasByPatenteYTipoVehiculo(request);
+        return ResponseEntity.ok(response);
     }
 
 
