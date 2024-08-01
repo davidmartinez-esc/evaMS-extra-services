@@ -17,7 +17,7 @@ import java.util.Date;
 @Setter
 public class ReporteReparacionCompleta {
 
-
+    private Long idIngreso;
     private String patente;
     private String marca;
     private String modelo;

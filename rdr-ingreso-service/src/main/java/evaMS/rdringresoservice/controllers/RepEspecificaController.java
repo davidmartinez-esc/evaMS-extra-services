@@ -81,6 +81,17 @@ public class RepEspecificaController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/getPatentesReparadasCiertoMesAnio")
+    public ResponseEntity<List<String>> getPatentesAutosReparadosCiertoMesAnio(@RequestParam int mes, @RequestParam int anio) {
+        return ResponseEntity.ok(repEspecificaService.getPatentesDeVehiculosReparadosCiertoMesAnio(mes, anio));
+    }
+
+    @GetMapping("/getRepsEfectuadasCiertoMesAnio")
+    public ResponseEntity<List<RepEspecificaEntity>> getRepsEfectuadasCiertoMesAnio(@RequestParam int mes,@RequestParam int anio) {
+        return ResponseEntity.ok(repEspecificaService.getRepsEfectuadasEnCiertoMesAnio(mes, anio));
+    }
+
+
 
 
 }

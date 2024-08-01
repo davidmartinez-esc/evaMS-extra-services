@@ -3,16 +3,20 @@ package evaMS.reportes_service.services;
 
 import evaMS.reportes_service.clients.PrecioPorRepFeignClient;
 import evaMS.reportes_service.clients.RepEspecificaFeignClient;
+import evaMS.reportes_service.clients.VehiculoFeignClient;
+import evaMS.reportes_service.dto.PatenteYTipo;
 import evaMS.reportes_service.dto.ReporteMesDto;
+import evaMS.reportes_service.dto.ReporteRepXTipoVehiculo;
 import evaMS.reportes_service.dto.ReporteTresUltimosMeses;
-import evaMS.reportes_service.requests.ReporteTresUltimosMesRequest;
+import evaMS.reportes_service.models.RepEspecificaEntity;
+import jakarta.ws.rs.NotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ReportesService {
@@ -22,10 +26,23 @@ public class ReportesService {
   @Autowired
     PrecioPorRepFeignClient precioPorRepFeignClient;
 
-  public List<ReporteTresUltimosMeses> getReportesXTipoReparacionTresUltimosMeses(ReporteTresUltimosMesRequest request){
-      //List<ReporteTresUltimosMeses> listaReportes=new ArrayList<>();
+  @Autowired
+    VehiculoFeignClient vehiculoFeignClient;
+
+  public List<ReporteTresUltimosMeses> getReportesXTipoReparacionTresUltimosMeses(String mes,String anio) throws ParseException {
+
       List<String> listaTiposDeReparacion=precioPorRepFeignClient.getNombreDeLasReps();
-      Date fechaActual=request.getFechaActual();
+
+      SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+      String fechaString=anio;
+
+      fechaString=fechaString.concat("-");
+      fechaString=fechaString.concat(mes);
+      fechaString=fechaString.concat("-20");
+
+      Date fechaActual=formatter.parse(fechaString);
+
       ReporteMesDto reporteMes=new ReporteMesDto();
 
       Calendar calendar = Calendar.getInstance();
@@ -48,8 +65,8 @@ public class ReportesService {
             Integer numeroReparacionesMesActual=reporteMes.getNumeroReparacionesMesActual();
             Integer totalRecaudadoMesActual=reporteMes.getTotalRecaudadoMesActual();
 
-            reporteTresUltimosMeses.setCantidadReparacionesEfectuadasMesActual(numeroReparacionesMesActual);
-            reporteTresUltimosMeses.setTotalRecaudadoReparacionMesActual(totalRecaudadoMesActual);
+            reporteTresUltimosMeses.setRepsMesActual(numeroReparacionesMesActual);
+            reporteTresUltimosMeses.setSumaPrecioRepsMesActual(totalRecaudadoMesActual);
 
 
             calendar.add(Calendar.MONTH, -1);
@@ -60,8 +77,8 @@ public class ReportesService {
             Integer numeroReparacionesMesAnterior=reporteMes.getNumeroReparacionesMesActual();
             Integer totalRecaudadoMesAnterior=reporteMes.getTotalRecaudadoMesActual();
 
-            reporteTresUltimosMeses.setCantidadReparacionesEfectuadasMesAnterior(numeroReparacionesMesAnterior);
-            reporteTresUltimosMeses.setTotalRecaudadoXReparacionMesAnterior(totalRecaudadoMesAnterior);
+            reporteTresUltimosMeses.setRepsMesAnterior(numeroReparacionesMesAnterior);
+            reporteTresUltimosMeses.setSumaPrecioRepsMesAnterior(totalRecaudadoMesAnterior);
 
             Integer variacionNumeroReparacionesActualAnterior;
             Integer variacionTotalRecaudadoMesActualAnterior;
@@ -80,10 +97,10 @@ public class ReportesService {
 
 
             reporteTresUltimosMeses.
-                    setPorcentajeVariacionReparacionesEfectuadasMesActualAnterior(variacionNumeroReparacionesActualAnterior);
+                    setVariacionNRepsMesActualAnterior(variacionNumeroReparacionesActualAnterior);
 
             reporteTresUltimosMeses.
-                    setPorcentajeVariacionTotalRecaudadoMesActualAnterior(variacionTotalRecaudadoMesActualAnterior);
+                    setVariacionSumaPrecioMesActualAnterior(variacionTotalRecaudadoMesActualAnterior);
 
             calendar.add(Calendar.MONTH, -1);
 
@@ -93,8 +110,8 @@ public class ReportesService {
             Integer numeroReparacionesMesPrevioAnterior=reporteMes.getNumeroReparacionesMesActual();
             Integer totalRecaudadoMesPrevioAnterior=reporteMes.getTotalRecaudadoMesActual();
 
-            reporteTresUltimosMeses.setCantidadReparacionesEfectuadasMesPrevioAnterior(numeroReparacionesMesPrevioAnterior);
-            reporteTresUltimosMeses.setTotalRecaudadoReparacionMesPrevioAnterior(totalRecaudadoMesPrevioAnterior);
+            reporteTresUltimosMeses.setRepsMesPrevioAnterior(numeroReparacionesMesPrevioAnterior);
+            reporteTresUltimosMeses.setSumaPrecioRepsMesPrevioAnterior(totalRecaudadoMesPrevioAnterior);
 
             Integer variacionNumeroReparacionesAnteriorPrevio;
             Integer variacionTotalRecaudadoMesAnteriorPrevio;
@@ -111,10 +128,10 @@ public class ReportesService {
             }
 
             reporteTresUltimosMeses.
-                    setPorcentajeVariacioReparacionesEfectuadasnMesAnteriorPrevio(variacionNumeroReparacionesAnteriorPrevio);
+                    setVariacionNRepsMesAnteriorPrevio(variacionNumeroReparacionesAnteriorPrevio);
 
             reporteTresUltimosMeses.
-                    setPorcentajeVariacioDineroRecaudadoMesAnteriorPrevio(variacionTotalRecaudadoMesAnteriorPrevio);
+                    setVariacionSumaPrecioMesAnterioPrevio(variacionTotalRecaudadoMesAnteriorPrevio);
 
 
 
@@ -125,6 +142,119 @@ public class ReportesService {
       return listaRespuesta;
 
   }
+
+ public List<ReporteRepXTipoVehiculo> getReporteTiposDeRepXTipoVehiculo(int mes, int year){
+    List<ReporteRepXTipoVehiculo> listaReportes=new ArrayList<>();
+
+    List<String> tiposDeReparacionRegistrados=precioPorRepFeignClient.getNombreDeLasReps();
+
+    List<RepEspecificaEntity> reparacionesEfectuadas= repEspecificaFeignClient.getRepsEfectuadasCiertoMesAnio(mes,year);
+     if (reparacionesEfectuadas == null){
+         throw new NotFoundException("No se registraron reparaciones en ese mes");
+     }
+
+    List<String> patentesQueTuvieronReparacion=repEspecificaFeignClient.getPatentesAutosReparadosCiertoMesAnio(mes, year);
+    if (patentesQueTuvieronReparacion == null){
+        throw new NotFoundException("No se registraron reparaciones en ese mes");
+    }
+
+    List<PatenteYTipo> patentesConTipoDeVehiculo=new ArrayList<>();
+
+     for (int i = 0, patentesQueTuvieronReparacionSize = patentesQueTuvieronReparacion.size(); i < patentesQueTuvieronReparacionSize; i++) {
+         String patente = patentesQueTuvieronReparacion.get(i);
+
+         PatenteYTipo patenteYTipo = new PatenteYTipo();
+         patenteYTipo.setPatente(patente);
+         patenteYTipo.setTipo(vehiculoFeignClient.getTipoVehiculo(patente));
+
+         patentesConTipoDeVehiculo.add(patenteYTipo);
+     }
+
+     //Iteracion Segun tipo de Reparacion
+
+
+     //Este for va tipo por tipo de reparacion buscando si se efectuo una reparacion de ese tipo en el mes y año pedido
+     for (Iterator<String> iterator = tiposDeReparacionRegistrados.iterator(); iterator.hasNext(); ) {
+
+         String tipoDeReparacion = iterator.next();
+
+         ReporteRepXTipoVehiculo nuevoReporte= new ReporteRepXTipoVehiculo(
+                 tipoDeReparacion,0,0,0,0,
+                 0,0,0,0,0,0,
+                 0,0
+         );
+
+         for (RepEspecificaEntity rep : reparacionesEfectuadas){
+
+             String nombreRepEfectuada=rep.getNombreDeLaRep();
+
+             if (nombreRepEfectuada.equals(tipoDeReparacion)){
+
+                 String patenteDeLaRepEfectuada=rep.getPatente();
+
+                 PatenteYTipo patenteYTipoBuscados= patentesConTipoDeVehiculo.stream()
+                         .filter(patenteYTipo -> patenteDeLaRepEfectuada.equals(patenteYTipo.getPatente()))
+                         .findAny()
+                         .orElse(null);
+
+
+
+                 switch (patenteYTipoBuscados.getTipo()){
+                     case "HATCHBACK":
+                         nuevoReporte.setAplicadasAHatchback(nuevoReporte.getAplicadasAHatchback()+1);
+                         nuevoReporte.setMontoTotalHatchback(nuevoReporte.getMontoTotalHatchback()+
+                                 rep.getPrecioDeLaReparacion());
+                         break;
+                     case "SEDAN":
+                         nuevoReporte.setAplicadasASedan(nuevoReporte.getAplicadasASedan()+1);
+                         nuevoReporte.setMontoTotalSedan(nuevoReporte.getMontoTotalSedan()+
+                                 rep.getPrecioDeLaReparacion());
+                         break;
+                     case "PICKUP":
+                         nuevoReporte.setAplicadasAPickup(nuevoReporte.getAplicadasAPickup()+1);
+                         nuevoReporte.setMontoTotalPickup(nuevoReporte.getMontoTotalPickup()+
+                                 rep.getPrecioDeLaReparacion());
+                         break;
+                     case "SUV":
+                         nuevoReporte.setAplicadasASUV(nuevoReporte.getAplicadasASUV()+1);
+                         nuevoReporte.setMontoTotalSUV(nuevoReporte.getMontoTotalSUV()+
+                                 rep.getPrecioDeLaReparacion());
+                         break;
+                     case "FURGONETA":
+                         nuevoReporte.setAplicadasAFurgoneta(nuevoReporte.getAplicadasAFurgoneta()+1);
+                         nuevoReporte.setMontoTotalFurgoneta(nuevoReporte.getMontoTotalFurgoneta()+
+                                 rep.getPrecioDeLaReparacion());
+                         break;
+                     default:
+                         break;
+
+                 }
+
+
+             }
+
+         }
+
+         nuevoReporte.setTotalAplicadas(nuevoReporte.getAplicadasAFurgoneta() + nuevoReporte.getAplicadasASUV()+
+                 nuevoReporte.getAplicadasAHatchback() + nuevoReporte.getAplicadasAPickup() + nuevoReporte.getAplicadasASedan());
+
+         nuevoReporte.setMontoTotalReparaciones( nuevoReporte.getMontoTotalHatchback()+ nuevoReporte.getMontoTotalFurgoneta()
+         + nuevoReporte.getMontoTotalSedan()+ nuevoReporte.getMontoTotalPickup()+ nuevoReporte.getMontoTotalSUV());
+
+         listaReportes.add(nuevoReporte);
+
+
+
+
+
+     }
+
+
+
+
+
+    return listaReportes;
+ }
 
 
 

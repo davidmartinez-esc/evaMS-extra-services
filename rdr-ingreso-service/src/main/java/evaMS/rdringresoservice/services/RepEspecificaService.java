@@ -110,6 +110,14 @@ public class RepEspecificaService {
         return dto;
     }
 
+    public List<String> getPatentesDeVehiculosReparadosCiertoMesAnio(int mes, int anio){
+        return repEspecificaRepository.getPatentesDeAutosReparadosCiertoMesAnio(mes,anio);
+    }
+
+    public List<RepEspecificaEntity> getRepsEfectuadasEnCiertoMesAnio(int mes, int anio){
+        return repEspecificaRepository.getRepsEfectuadasEnCiertoMesAnio(mes,anio);
+    }
+
 
 
 

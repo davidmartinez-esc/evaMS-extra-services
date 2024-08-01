@@ -189,14 +189,16 @@ public class GestionIngresoService {
         List<IngresoARepEntity> listaIngresos=ingresoARepService.getReparaciones();
         IngresoARepEntity ingreso;
         VehiculoEntity vehiculo;
-
+        /*Se obtienen las listas de todos los ingresos y todos los vehiculos asi no hacemos consultas de
+        ms a las bases de datos
+        */
         for (int i = 0; i < listaIngresos.size(); i++) {
             ingreso=listaIngresos.get(i);
             for (int j = 0; j < listaVehiculos.size(); j++) {
                 vehiculo=listaVehiculos.get(j);
                 if (ingreso.getIdVehiculo() == vehiculo.getId()){
                     ReporteReparacionCompleta reporte= new ReporteReparacionCompleta();
-
+                    reporte.setIdIngreso(ingreso.getId());
                     reporte.setPatente(vehiculo.getPatente());
                     reporte.setMarca(vehiculo.getMarca());
                     reporte.setModelo(vehiculo.getModelo());

@@ -12,19 +12,20 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ReporteTresUltimosMeses {
     String nombreTipoDeRep;
-    Integer cantidadReparacionesEfectuadasMesActual;
-    Integer totalRecaudadoReparacionMesActual;
+    Integer repsMesActual;
+    Integer sumaPrecioRepsMesActual;
 
-    Integer porcentajeVariacionReparacionesEfectuadasMesActualAnterior;
-    Integer porcentajeVariacionTotalRecaudadoMesActualAnterior;
+    Integer variacionNRepsMesActualAnterior;
+    Integer variacionSumaPrecioMesActualAnterior;
 
-    Integer cantidadReparacionesEfectuadasMesAnterior;
-    Integer totalRecaudadoXReparacionMesAnterior;
+    Integer repsMesAnterior;
+    Integer sumaPrecioRepsMesAnterior;
 
-    Integer porcentajeVariacioReparacionesEfectuadasnMesAnteriorPrevio;
-    Integer porcentajeVariacioDineroRecaudadoMesAnteriorPrevio;
+    Integer variacionNRepsMesAnteriorPrevio;
+    Integer variacionSumaPrecioMesAnterioPrevio;
 
-    Integer cantidadReparacionesEfectuadasMesPrevioAnterior;
-    Integer totalRecaudadoReparacionMesPrevioAnterior;
+    //El mes previo anterior es el mes que viene antes del anterior
+    Integer repsMesPrevioAnterior;
+    Integer sumaPrecioRepsMesPrevioAnterior;
 
 }

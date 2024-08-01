@@ -1,8 +1,7 @@
-package evaMS.rdringresoservice.clients;
+package evaMS.reportes_service.clients;
 
 
-import evaMS.rdringresoservice.configurations.FeignClientConfig;
-import evaMS.rdringresoservice.models.VehiculoEntity;
+import evaMS.reportes_service.configurations.FeignClientConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +16,8 @@ import java.util.List;
         configuration = {FeignClientConfig.class})
 public interface VehiculoFeignClient {
 
-    @GetMapping("/{id}")
-    VehiculoEntity getVehiculoById(@PathVariable Long id);
-
-    @GetMapping("/")
-    List<VehiculoEntity> listVehiculos();
+    @GetMapping("/getTodasLasPatentes")
+    List<String> getTodasLasPatentes();
 
     @GetMapping("/getTipoVehiculo")
     String getTipoVehiculo(@RequestParam String patente);

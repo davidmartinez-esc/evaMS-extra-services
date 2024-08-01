@@ -54,4 +54,12 @@ public interface RepEspecificaRepository extends JpaRepository<RepEspecificaEnti
     INRepsEfectuadasYMonto getNumeroDeRepsYMontoByPatenteTipoVehiculo(@Param("patente") String patente,@Param("nombreDeLaRep") String nombreDeLaRep);
 
 
+    @Query(value = "SELECT * FROM reparacion_especifica r WHERE EXTRACT(MONTH FROM r.fecha_reparacion) = :mes " +
+            "AND EXTRACT(YEAR FROM r.fecha_reparacion) = :anio", nativeQuery = true)
+    List<RepEspecificaEntity> getRepsEfectuadasEnCiertoMesAnio(@Param("mes") int mes,@Param("anio") int anio);
+
+    @Query(value = "SELECT DISTINCT patente FROM reparacion_especifica r WHERE EXTRACT(MONTH FROM r.fecha_reparacion) = :mes " +
+            "AND EXTRACT(YEAR FROM r.fecha_reparacion) = :anio", nativeQuery = true)
+    List<String> getPatentesDeAutosReparadosCiertoMesAnio(@Param("mes") int mes, @Param("anio") int anio);
+
 }
