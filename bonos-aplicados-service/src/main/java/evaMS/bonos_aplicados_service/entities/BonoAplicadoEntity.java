@@ -20,6 +20,7 @@ public class BonoAplicadoEntity {
     
     private int monto;
 
+    @Temporal(TemporalType.DATE)
     private Date fechaAplicacion;
 
     private String marca;

@@ -2,6 +2,7 @@ package evaMS.bonos_aplicados_service.controllers;
 
 
 import evaMS.bonos_aplicados_service.entities.BonoAplicadoEntity;
+import evaMS.bonos_aplicados_service.requests.NuevoBonoAplicadoRequest;
 import evaMS.bonos_aplicados_service.services.BonoAplicadoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class BonoAplicadoController {
         return ResponseEntity.ok(bonoAplicado);
     }
 
-    @PostMapping("/")
+    @PostMapping("/save")
     public ResponseEntity<BonoAplicadoEntity> saveBonoAplicado(@RequestBody BonoAplicadoEntity bonoAplicado) {
         BonoAplicadoEntity newBonoAplicado = bonoAplicadoService.saveBonoAplicado(bonoAplicado);
         return ResponseEntity.ok(newBonoAplicado);
@@ -44,6 +45,12 @@ public class BonoAplicadoController {
     public ResponseEntity<Integer> getNumeroDeBonosAplicadosPorMesMarca(@RequestParam int mes,@RequestParam int anio,@RequestParam String marca) {
         Integer numeroDeBonosAplicados = bonoAplicadoService.getNumeroDeBonosAplicadosPorMesMarca(mes,anio,marca);
         return ResponseEntity.ok(numeroDeBonosAplicados);
+    }
+
+    @PostMapping("/guardarNuevoBonoAplicado")
+    public ResponseEntity<NuevoBonoAplicadoRequest> saveBonoAplicado(@RequestBody NuevoBonoAplicadoRequest bonoAplicado) {
+
+        return ResponseEntity.ok(bonoAplicadoService.saveNuevoBonoAplicado(bonoAplicado));
     }
 
 

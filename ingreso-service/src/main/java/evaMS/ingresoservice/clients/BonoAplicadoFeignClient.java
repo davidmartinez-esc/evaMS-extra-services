@@ -1,9 +1,8 @@
 package evaMS.ingresoservice.clients;
 
 import evaMS.ingresoservice.configurations.FeignClientConfig;
-import evaMS.ingresoservice.dto.RepEspecificaEntity;
+import evaMS.ingresoservice.request.NuevoBonoAplicadoRequest;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -15,6 +14,9 @@ public interface BonoAplicadoFeignClient {
     @GetMapping("/getNumeroDeBonos")
     Integer getNumeroDeBonosAplicadosPorMesMarca(@RequestParam int mes, @RequestParam int anio,
                                                  @RequestParam String marca);
+
+    @PostMapping("/guardarNuevoBonoAplicado")
+    NuevoBonoAplicadoRequest saveBonoAplicado(@RequestBody NuevoBonoAplicadoRequest bonoAplicado);
 
 
 }

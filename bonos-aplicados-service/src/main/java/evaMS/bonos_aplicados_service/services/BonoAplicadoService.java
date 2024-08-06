@@ -5,6 +5,7 @@ package evaMS.bonos_aplicados_service.services;
 import evaMS.bonos_aplicados_service.entities.BonoAplicadoEntity;
 import evaMS.bonos_aplicados_service.repositories.BonoAplicadoRepository;
 
+import evaMS.bonos_aplicados_service.requests.NuevoBonoAplicadoRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,5 +49,18 @@ public class BonoAplicadoService {
             response=0;
         }
         return response;
+    }
+
+    public NuevoBonoAplicadoRequest saveNuevoBonoAplicado(NuevoBonoAplicadoRequest request){
+        BonoAplicadoEntity bonoAplicado=new BonoAplicadoEntity();
+
+        bonoAplicado.setMonto(request.getMonto());
+        bonoAplicado.setMarca(request.getMarca());
+        bonoAplicado.setFechaAplicacion(request.getFechaAplicacion());
+        bonoAplicado.setIdIngreso(request.getIdIngreso());
+
+        bonoAplicadoRepository.save(bonoAplicado);
+
+        return request;
     }
 }

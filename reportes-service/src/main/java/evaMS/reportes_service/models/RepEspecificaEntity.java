@@ -2,23 +2,21 @@ package evaMS.reportes_service.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalTime;
 import java.util.Date;
 
-@Entity
-@Table(name = "reparacion_especifica")
-@Data
+
+
+
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class RepEspecificaEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false)
+
     private Long id;
 
     @Column(nullable = false)

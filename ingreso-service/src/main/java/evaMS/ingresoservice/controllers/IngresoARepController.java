@@ -5,14 +5,12 @@ package evaMS.ingresoservice.controllers;
 import evaMS.ingresoservice.dto.ReporteReparacionCompleta;
 import evaMS.ingresoservice.entities.IngresoARepEntity;
 import evaMS.ingresoservice.request.CalcularCostoFinalRequest;
-import evaMS.ingresoservice.request.NuevaRepAplicadaRequest;
 import evaMS.ingresoservice.services.GestionIngresoService;
 import evaMS.ingresoservice.services.IngresoARepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -63,12 +61,6 @@ public class IngresoARepController {
     public ResponseEntity<IngresoARepEntity> getIngresoARepById(@PathVariable Long id) {
         IngresoARepEntity ingresoARepEntity= ingresoARepService.getIngresoARepById(id);
         return ResponseEntity.ok(ingresoARepEntity);
-    }
-
-    @PostMapping("/asignarNuevaReparacion")
-    public ResponseEntity<Integer> nuevaReparacionAsignada(@RequestBody NuevaRepAplicadaRequest nuevaRepAplicada){
-        Integer response=gestionIngresoService.asignarNuevaRepEspecificaAIngreso(nuevaRepAplicada);
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/getNumeroDeReps")

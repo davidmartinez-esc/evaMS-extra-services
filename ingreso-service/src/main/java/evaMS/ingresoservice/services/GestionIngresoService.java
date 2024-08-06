@@ -1,12 +1,11 @@
 package evaMS.ingresoservice.services;
 
 import evaMS.ingresoservice.clients.*;
-import evaMS.ingresoservice.dto.RepEspecificaEntity;
 import evaMS.ingresoservice.dto.ReporteReparacionCompleta;
 import evaMS.ingresoservice.dto.VehiculoEntity;
 import evaMS.ingresoservice.entities.IngresoARepEntity;
 import evaMS.ingresoservice.request.CalcularCostoFinalRequest;
-import evaMS.ingresoservice.request.NuevaRepAplicadaRequest;
+import evaMS.ingresoservice.request.NuevoBonoAplicadoRequest;
 import evaMS.ingresoservice.request.RecargoPorAtrasoEnRecogerRequest;
 import evaMS.ingresoservice.request.RequestDescuentoDiaHoraIngreso;
 import jakarta.transaction.Transactional;
@@ -30,9 +29,6 @@ public class GestionIngresoService {
     BonoAplicadoFeignClient bonoAplicadoFeignClient;
 
     @Autowired
-    PrecioPorRepFeignClient precioPorRepFeignClient;
-
-    @Autowired
     IngresoARepService ingresoARepService;
 
     @Autowired
@@ -44,24 +40,6 @@ public class GestionIngresoService {
 
     float IVA=19;
 
-    public Integer asignarNuevaRepEspecificaAIngreso(NuevaRepAplicadaRequest request){
-        RepEspecificaEntity repPorAsignar=new RepEspecificaEntity();
-        IngresoARepEntity ingreso=ingresoARepService.getIngresoARepById((long)request.getIdIngreso());
-        VehiculoEntity vehiculo=vehiculoFeignClient.getVehiculoById((long)ingreso.getIdVehiculo());
-
-        Integer precioReparacion= precioPorRepFeignClient.getPrecioByRepYTipoDeMotor(request.getTipoDeReparacion(),vehiculo.getTipoMotor());
-
-        repPorAsignar.setIdIngresoARep(request.getIdIngreso());
-        repPorAsignar.setNombreDeLaRep(request.getTipoDeReparacion());
-        repPorAsignar.setPrecioDeLaReparacion(precioReparacion);
-
-        repPorAsignar.setHoraReparacion(request.getHoraReparacion());
-        repPorAsignar.setFechaReparacion(request.getFechaReparacion());
-
-        repEspecificaFeignClient.saveRepEspecifica(repPorAsignar);
-
-        return precioReparacion;
-    }
 
     @Transactional
     public IngresoARepEntity saveIngresoARep(IngresoARepEntity ingreso){
@@ -71,6 +49,7 @@ public class GestionIngresoService {
 
         return ingresoARepService.saveReparacion(ingreso);
     }
+
     /*
     private void checkearPropiedadesNotNull(IngresoARepEntity ingreso) throws Exception {
         if (ingreso.getFechaIngreso().equals(null) || ingreso.getHoraIngreso().equals(null) ||
@@ -108,7 +87,8 @@ public class GestionIngresoService {
 
 
         if (calculoFinalRequest.getUsaBono()){
-            montoDescuentoPorBono=getMontoBonoSiEsPosible(ingreso.getFechaRecogida(),vehiculo.getMarca());
+            montoDescuentoPorBono=getMontoBonoSiEsPosible(ingreso.getFechaRecogida(),vehiculo.getMarca(),ingreso.getId());
+
         }
 
         //DESCUENTOS
@@ -138,6 +118,12 @@ public class GestionIngresoService {
         montoRecargos=(int)(montoReparaciones*recargoPorAntiguedad + montoReparaciones*recargoPorKilometraje +
                 montoReparaciones*recargoPorAtrasoEnRecoger);
 
+        System.out.println(montoReparaciones);
+        System.out.println(recargoPorKilometraje);
+        System.out.println(recargoPorAntiguedad);
+        System.out.println(recargoPorAtrasoEnRecoger);
+        System.out.println(montoRecargos);
+
 
         montoIVA=(int)(montoReparaciones*(IVA/100)); //CAMBIAR ESTO PARA QUE APAREZCA EN UNA TABLA DE UNA BASE DE DATOS
 
@@ -156,7 +142,7 @@ public class GestionIngresoService {
        return ingreso;
     }
 
-    private Integer getMontoBonoSiEsPosible(Date fecha, String marca) throws Exception {
+    private Integer getMontoBonoSiEsPosible(Date fecha, String marca, Long idIngreso) throws Exception {
         int mes=0;
         int anio=0;
         Integer montoDelBono;
@@ -172,13 +158,23 @@ public class GestionIngresoService {
          bonosAplicadosEsteMes=bonoAplicadoFeignClient.getNumeroDeBonosAplicadosPorMesMarca(mes,anio,marca);
          bonosDisponibles=descuentosFeignClient.getCantidadBonos(marca);
 
-        if (bonosAplicadosEsteMes>bonosDisponibles){
+        if (bonosAplicadosEsteMes>=bonosDisponibles){
             throw new Exception("No se puede asignar un bono a este vehiculo, intentelo denuevo");
         }
        montoDelBono=descuentosFeignClient.getMontoBono(marca);
         if (montoDelBono==null){
             montoDelBono=0;
         }
+
+        NuevoBonoAplicadoRequest request=new NuevoBonoAplicadoRequest();
+        request.setIdIngreso(Math.toIntExact(idIngreso));
+        request.setFechaAplicacion(fecha);
+        request.setMarca(marca);
+        request.setMonto((int)montoDelBono);
+
+        bonoAplicadoFeignClient.saveBonoAplicado(request);
+
+
         return montoDelBono;
     }
 
